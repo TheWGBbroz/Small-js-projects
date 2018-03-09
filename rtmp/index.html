@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RTMP Player</title>
+
+  <!-- jQuery -->
+  <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+
+  <!-- video.js (also see playStream() function) -->
+  <link href="video-js/video-js.css" rel="stylesheet" type="text/css">
+
+  <!-- Flowplayer -->
+  <script src="http://releases.flowplayer.org/js/flowplayer-3.2.13.min.js"></script>
+
+  <!-- JWPlayer -->
+  <script src="http://jwpsrv.com/library/sq8RfmIXEeOtdhIxOQfUww.js"></script>
+
+</head>
+<body>
+
+  <form id="urlForm">
+    <label>RTMP URL:</label>
+    <input id="rtmpUrl" style="width: 50%" type="text" name="rtmpUrl" value=""/>
+    <button type="submit">Play</button>
+  </form>
+
+
+  <div style="vertical-align: top; display: inline-block; margin-right: 50px;">
+  <h2>Flowplayer</h2>
+  <a id="rtmpplayer" style="display:inline-block;width:360px;height:202px;">
+  </a>
+  </div>
+
+  <div style="vertical-align: top; display: inline-block; margin-right: 50px;">
+    <h2>Video.js</h2>
+    <video id="video-js-player" class="video-js vjs-default-skin" controls preload="none" width="360" height="202"
+        data-setup='{ "controls": true, "autoplay": true, "preload": "auto" }'>
+      <source id="videoJSSource" type="rtmp/mp4" />
+      <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+    </video>
+    <p><strong>Note:</strong> Because of <a href="https://github.com/videojs/video-js-swf/issues/55">this bug</a>, you may need to go to full-screen then back again.</p>
+  </div>
+
+  <div style="vertical-align: top; display: inline-block; margin-right: 50px;">
+    <h2>JWPlayer</h2>
+    <div id='playerPgXusyDDSVNX'></div>
+  </div>
+
+  <script>
+    $("#urlForm").on("submit", function(event) {
+      event.preventDefault();
+
+      console.log("Playing stream ...");
+
+      var rtmpUrl = $("#rtmpUrl").val();
+
+      // play in FlowPlayer
+      flowplayer("rtmpplayer", "http://releases.flowplayer.org/swf/flowplayer-3.2.18.swf", {
+        plugins: {
+          subscribe: true,
+          rtmp: {
+            url: "http://releases.flowplayer.org/swf/flowplayer.rtmp-3.2.13.swf"
+          }
+        },
+        clip: {
+          provider: 'rtmp',
+          url: rtmpUrl,
+          rtmpSubscribe: true,
+          autoPlay: true,
+          live: true
+        },
+        log: {
+          level: 'debug',
+          filter: 'org.flowplayer.rtmp.*'
+        }
+      });
+
+      // play in JWPlayer
+      jwplayer('playerPgXusyDDSVNX').setup({
+          file: rtmpUrl,
+          width: '360',
+          height: '202',
+          rtmp: {
+            subscribe: true
+          },
+          autostart: 'true'
+      });
+
+      // play in Video.js
+      $("#videoJSSource").attr("src", rtmpUrl);
+      $.getScript("/video-js/video.js", function(data, textStatus, jqxhr) {
+        videojs.options.flash.swf = "video-js/video-js.swf";
+        console.log("loaded video.js");
+      });
+    });
+  </script>
+
+</body>
+</html>

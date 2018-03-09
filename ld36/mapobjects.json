@@ -1,0 +1,32 @@
+{
+  "map_objects": [
+    {
+      "name": "castleLeft",
+      "img": 0,
+      "hasCollision": true
+    },
+    {
+      "name": "castleMid",
+      "img": 1,
+      "hasCollision": true
+    },
+    {
+      "name": "castleRight",
+      "img": 2,
+      "hasCollision": true
+    },
+    {
+      "name": "enemy",
+      "img": 4,
+      "hasCollision": false,
+      "deadly": true,
+      "ai": 1,
+      "ai_jumpspeed": 3
+    },
+    {
+      "name": "box",
+      "img": 5,
+      "hasCollision": true
+    }
+  ]
+}

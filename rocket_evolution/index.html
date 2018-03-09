@@ -1,0 +1,29 @@
+<html>
+<head>
+	<script src="//thewgbbroz.nl/assets/js/p5.min.js"></script>
+	<script src="//thewgbbroz.nl/assets/js/p5.dom.min.js"></script>
+	<script src="index.js"></script>
+</head>
+<body>
+	<div id="canvas-holder"></div>
+	
+	<p>Speed:</p>
+	<div id="speed-slider-holder"></div>
+	<br>
+
+	<p>Mutation chance:</p>
+	<div id="mutation-slide-holder"></div>
+	<br>
+
+	<h3>'Rocket' evolution</h3>
+	<p>
+		The ellipses are the rockets. The green ellipse is the rocket which has the average genes, which I thought was interesting to add.<br>
+		The average rocket can't reproduce.<br>
+		The obstacles (the pink ellipses) are placed randomly and if a rocket collides with it (or the boundaries) it gets stuck.<br>
+		A rockets fitness value is 1 devided by the distance from the rocket to the target point (red ellipse).<br>
+		If a rocket gets stuck it's fitness value is multiplied by 0.2.<br>
+		Rockets with high fitness values have a low chance of dying, and the rockets with low fitness values have a high chance of dying.<br>
+		After 10 seconds the rockets which are alive get to reproduce, with a mutation value applied.<br>
+	</p>
+</body>
+</html>

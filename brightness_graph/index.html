@@ -1,0 +1,134 @@
+<html>
+<head>
+	<title>Brightness Chart</title>
+	<script src="https://thewgbbroz.nl/assets/js/jquery.min.js"></script>
+	<script src="http://www.chartjs.org/dist/2.7.1/Chart.bundle.js"></script>
+	<script src="http://www.chartjs.org/samples/latest/utils.js"></script>
+
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+</head>
+<body>
+	<div style="width:75%;">
+		<canvas id="canvas"></canvas>
+	</div>
+	<br>
+	<br>
+	<script>
+		var config = {
+			type: "line",
+			data: {
+				labels: [],
+				datasets: []
+			},
+			options: {
+				responsive: true,
+				title: {
+					display: true,
+					text: "Light data graph"
+				},
+				tooltips: {
+					mode: "index",
+					intersect: false,
+				},
+				hover: {
+					mode: "nearest",
+					intersect: true
+				},
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: "Time"
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: "Brightness"
+						}
+					}]
+				}
+			}
+		};
+
+		var chart;
+		window.onload = function() {
+			var ctx = document.getElementById("canvas").getContext("2d");
+			chart = new Chart(ctx, config);
+
+			$.ajax({
+				url: "/get_brightnesses.php",
+				dataType: "json",
+				success: addData
+			});
+		};
+
+		function addData(lightdata) {
+			var points = 250;
+			var step = Math.ceil(lightdata.data.length / points);
+			console.log("Step: " + step);
+
+			console.log("Data from: " + lightdata.from + " (" + formatDate(new Date(lightdata.from * 1000)) + ")");
+			console.log("Data to: " + lightdata.to + " (" + formatDate(new Date(lightdata.to * 1000)) + ")");
+
+			var data = [];
+			var labels = [];
+
+			var avg = 0;
+			var avgDataAmount = 0;
+
+			for(var i = 0; i < lightdata.data.length; i++) {
+				avg += lightdata.data[i].bright;
+				avgDataAmount++;
+
+				if(i % step == 0) {
+					avg /= avgDataAmount;
+
+					var time = lightdata.data[i].time;
+					var brightness = Math.floor(avg * 100) / 100;
+
+					data.push(brightness);
+					labels.push(formatDate(new Date(time * 1000)));
+
+					avg = 0;
+					avgDataAmount = 0;
+				}
+			}
+
+			var newDataset = {
+				label: "Brightness",
+				backgroundColor: "rgb(255, 99, 132)",
+				borderColor: "rgb(255, 99, 132)",
+				data: data,
+				fill: false
+			};
+
+			//console.log(labels);
+			//console.log(data);
+
+			config.data.labels = labels;
+			config.data.datasets.push(newDataset);
+
+			chart.update();
+		}
+
+		function formatDate(d) {
+			var hours = d.getHours().toString();
+			if(hours.length == 1) hours = "0" + hours;
+
+			var minutes = d.getMinutes().toString();
+			if(minutes.length == 1) minutes = "0" + minutes;
+
+			return d.getDate() + "-" + (d.getMonth() + 1) + "-" + d.getFullYear() + " " + hours + ":" + minutes;
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+<head>
+
+</head>
+<body>
+	<div id="output"></div>
+	<button onclick="recognition.start()">Start</button>
+	<button onclick="recognition.stop()">Stop</button>
+
+	<script>
+	var recognition = new webkitSpeechRecognition();
+	recognition.continuous = true;
+
+	var output = document.getElementById('output');
+	recognition.onresult = function(event) {
+		output.textContent = event.results[0][0].transcript;
+	};
+
+	function initAudio() {
+		if (!navigator.webkitGetUserMedia)
+			return(alert("Error: getUserMedia not supported!"));
+
+		navigator.webkitGetUserMedia({audio:true}, () => { console.log("Got stream") }, function(e) {
+			alert('Error getting audio');
+			console.log(e);
+		});
+	}
+	</script>
+</body>
+</html>

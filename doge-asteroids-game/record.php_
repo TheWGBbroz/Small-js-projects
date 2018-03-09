@@ -1,0 +1,43 @@
+<?php
+$s_score = $_GET["score"];
+$name = $_GET["name"];
+$score = intval($s_score);
+
+if(!($s_score && $name && $score)) {
+  echo "Error";
+  return;
+}
+
+if(strlen($name) > 16) {
+  $name = substr($name, 16);
+}
+
+$recordFile = fopen("record.txt", "r");
+$line = fread($recordFile, filesize("record.txt"));
+$parts = explode(" ", $line);
+$best_score = intval($parts[0]);
+$best_name = substr($line, strlen($parts[0]));
+
+fclose($recordFile);
+
+$isHighscore = false;
+
+if($score > $best_score) {
+  $recordFile = fopen("record.txt", "w");
+  $scoreLine = $score . " " . $name;
+  fwrite($recordFile, $scoreLine);
+  fclose($recordFile);
+
+  $best_score = $score;
+  $best_name = $name;
+
+  $isHighscore = true;
+}
+
+echo json_encode(array(
+  "isWorldRecord" => $isHighscore,
+  "worldRecord_name" => $best_name,
+  "worldRecord_score" => $best_score
+));
+
+?>
